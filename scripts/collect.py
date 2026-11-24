@@ -68,9 +68,21 @@ def cnn():
     # 세부 7개 '점수'는 CNN이 그날 것만 주므로 매일 모아 둠 (data/series/cnn_sub_scores.json, 날짜 = 미국 기준일)
     p = os.path.join(ROOT, 'data', 'series', 'cnn_sub_scores.json'); os.makedirs(os.path.dirname(p), exist_ok=True)
     h = json.load(open(p)) if os.path.exists(p) else {}
-    day = pd.Timestamp(j['fear_and_greed']['timestamp']).tz_convert('America/New_York').strftime('%Y-%m-%d')
+    # CNN은 지표마다 새 자료가 들어올 때 바로 다시 계산함(정해진 주기 없음). 장 마감 뒤에도 정크본드(약 18:30 ET)·신고가/시장 폭(약 19:00 ET)이 늦게 들어옴
+    # → 기준 시각이 미국 동부 19:00 이후면 '확정', 그 전이면 '잠정'. 같은 날짜는 더 늦은 시각 값으로만 덮어씀
+    ts = pd.Timestamp(j['fear_and_greed']['timestamp']).tz_convert('America/New_York')
+    day = ts.strftime('%Y-%m-%d'); final = ts.hour >= 19
     keys = ['market_momentum_sp500', 'stock_price_strength', 'stock_price_breadth', 'put_call_options', 'market_volatility_vix', 'safe_haven_demand', 'junk_bond_demand']
-    h[day] = {'score': round(j['fear_and_greed']['score'], 2), **{k: round(j[k]['score'], 2) for k in keys if k in j}}
+    rec = {'score': round(j['fear_and_greed']['score'], 2), **{k: round(j[k]['score'], 2) for k in keys if k in j},
+           'ts_et': ts.strftime('%Y-%m-%d %H:%M'), 'final': final}
+    if day not in h or h[day].get('ts_et', '') <= rec['ts_et']: h[day] = rec
+    # 장 시작 전(미국 새벽)에 받으면 timestamp가 이미 다음 날일 수 있음 → CNN이 주는 '전일 마감'을 직전 거래일 확정 종합 점수로 기록
+    pc = j['fear_and_greed'].get('previous_close')
+    if pc is not None:
+        prev_day = (ts - pd.Timedelta(days=1)); 
+        while prev_day.weekday() >= 5: prev_day -= pd.Timedelta(days=1)
+        pd_ = prev_day.strftime('%Y-%m-%d')
+        if pd_ in h: h[pd_]['close_official'] = round(pc, 2)
     json.dump(dict(sorted(h.items())), open(p, 'w'), indent=0)
 
 # 3. FRED (API 키 필요)
