@@ -1,16 +1,33 @@
 #!/usr/bin/env bash
 # GitHub Actions가 실행하는 본체 — 설치 → 수집 → 저장소에 올리기
-set -uo pipefail
-pip install --quiet requests pandas lxml yfinance
-python scripts/collect.py
+# 모든 출력은 data/latest/run_log.txt 에도 남김(Claude가 실행 기록 화면 없이도 원인을 볼 수 있게)
+set -u
+mkdir -p data/latest
+LOG=data/latest/run_log.txt
+{
+  echo "=== run $(date -u +%Y-%m-%dT%H:%M:%SZ) · commit $(git rev-parse --short HEAD) · python $(python --version 2>&1)"
+  echo "--- pip install"
+  pip install --quiet --disable-pip-version-check requests pandas lxml yfinance 2>&1 | tail -20
+  echo "pip exit=${PIPESTATUS[0]}"
+  echo "--- collect.py"
+  python scripts/collect.py 2>&1 | tail -80
+  echo "collect exit=${PIPESTATUS[0]}"
+} > /tmp/run_log.txt 2>&1
+cat /tmp/run_log.txt
+
+# 수집 결과를 임시로 옮겨 두고, 저장소 최신 상태 위에 다시 얹어서 올림 (실행 중 저장소가 바뀌어도 충돌 없음)
 git config user.name "market-data-bot"
 git config user.email "actions@users.noreply.github.com"
-git add data
-git diff --cached --quiet && { echo "바뀐 자료 없음"; exit 0; }
-git commit -q -m "data $(date -u +%Y-%m-%dT%H:%MZ)"
-# 실행 중에 저장소가 바뀌었으면(스크립트 수정·다른 실행) 최신을 받아 이번 자료를 위에 얹고 올림. 최대 3번
+rm -rf /tmp/newdata && cp -r data /tmp/newdata
 for i in 1 2 3; do
-  if git pull --rebase -X theirs origin main && git push; then exit 0; fi
-  sleep 10
+  git fetch -q origin main && git reset -q --hard origin/main
+  rm -rf data && cp -r /tmp/newdata data
+  cp /tmp/run_log.txt "$LOG"
+  echo "--- push try $i $(date -u +%H:%M:%SZ)" >> "$LOG"
+  git add -A data
+  if git diff --cached --quiet; then echo "바뀐 자료 없음"; exit 0; fi
+  git commit -q -m "data $(date -u +%Y-%m-%dT%H:%MZ)"
+  if git push -q origin HEAD:main; then echo "저장 완료"; exit 0; fi
+  sleep 15
 done
-exit 1
+echo "저장 실패"; exit 1
