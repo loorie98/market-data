@@ -12,6 +12,9 @@ LOG=data/latest/run_log.txt
   echo "--- collect.py"
   python scripts/collect.py 2>&1 | tail -80
   echo "collect exit=${PIPESTATUS[0]}"
+  echo "--- collect_long.py (1990~ 장기 일봉)"
+  python scripts/collect_long.py 2>&1 | tail -20
+  echo "collect_long exit=${PIPESTATUS[0]}"
 } > /tmp/run_log.txt 2>&1
 cat /tmp/run_log.txt
 
