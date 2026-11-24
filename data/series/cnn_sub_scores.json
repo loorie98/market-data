@@ -21,15 +21,15 @@
 "close_official": 16.97
 },
 "2026-11-24": {
-"score": 15.28,
-"market_momentum_sp500": 3.2,
-"stock_price_strength": 28.6,
-"stock_price_breadth": 17.6,
-"put_call_options": 5.4,
-"market_volatility_vix": 27.56,
-"safe_haven_demand": 6.4,
-"junk_bond_demand": 18.2,
-"ts_et": "2026-11-24 07:41",
+"score": 17.42,
+"market_momentum_sp500": 3,
+"stock_price_strength": 28.4,
+"stock_price_breadth": 16.6,
+"put_call_options": 8.8,
+"market_volatility_vix": 42.95,
+"safe_haven_demand": 4.4,
+"junk_bond_demand": 17.8,
+"ts_et": "2026-11-24 17:03",
 "final": false
 }
 }

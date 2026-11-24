@@ -1,7 +1,7 @@
 {
  "QQQ": {
   "symbol": "QQQ",
-  "spot": 651.030029296875,
+  "spot": 638.0999755859375,
   "expirations_used": [
    "2026-11-24",
    "2026-11-25",
@@ -12,25 +12,25 @@
    "2026-12-03",
    "2026-12-04"
   ],
-  "put_call_volume": 1.202,
+  "put_call_volume": 1.121,
   "put_call_oi": 1.121,
-  "call_volume": 196400.0,
-  "put_volume": 236016.0,
+  "call_volume": 3569345.0,
+  "put_volume": 4002041.0,
   "call_oi": 1035146.0,
   "put_oi": 1160792.0,
-  "net_gex_per_1pct_usd": 899251115.993702,
-  "gamma_flip": 646.71,
-  "call_wall": 660.0,
+  "net_gex_per_1pct_usd": -2105142274.2606442,
+  "gamma_flip": 649.7,
+  "call_wall": 650.0,
   "put_wall": 635.0,
   "max_call_oi_strike_above": 700.0,
   "max_put_oi_strike_below": 635.0,
-  "spot_date": "2026-11-23",
+  "spot_date": "2026-11-24",
   "method": "가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정",
-  "as_of_utc": "2026-11-24T13:21+00:00"
+  "as_of_utc": "2026-11-24T22:32+00:00"
  },
  "SPY": {
   "symbol": "SPY",
-  "spot": 722.2899780273438,
+  "spot": 718.780029296875,
   "expirations_used": [
    "2026-11-24",
    "2026-11-25",
@@ -41,20 +41,20 @@
    "2026-12-03",
    "2026-12-04"
   ],
-  "put_call_volume": 0.613,
+  "put_call_volume": 1.169,
   "put_call_oi": 1.16,
-  "call_volume": 398617.0,
-  "put_volume": 244369.0,
+  "call_volume": 5683608.0,
+  "put_volume": 6646445.0,
   "call_oi": 1449296.0,
   "put_oi": 1681655.0,
-  "net_gex_per_1pct_usd": -576095058.816875,
-  "gamma_flip": 723.69,
-  "call_wall": 730.0,
+  "net_gex_per_1pct_usd": -4267441609.846978,
+  "gamma_flip": 726.33,
+  "call_wall": 720.0,
   "put_wall": 700.0,
   "max_call_oi_strike_above": 775.0,
   "max_put_oi_strike_below": 700.0,
-  "spot_date": "2026-11-23",
+  "spot_date": "2026-11-24",
   "method": "가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정",
-  "as_of_utc": "2026-11-24T13:21+00:00"
+  "as_of_utc": "2026-11-24T22:32+00:00"
  }
 }
