@@ -87,7 +87,8 @@ def cnn():
 
 # 3. FRED (API 키 필요)
 FRED = ['BAMLH0A0HYM2', 'BAMLH0A3HYC', 'BAMLH0A1HYBB', 'BAMLC0A0CM', 'BAA10Y', 'DGS2', 'DGS10', 'DTB3', 'STLFSI4',
-        'WALCL', 'WRESBAL', 'WTREGEN', 'RRPONTSYD', 'RPONTSYD', 'M2SL', 'NFCI', 'SOFR', 'IORB', 'DFEDTARU']
+        'WALCL', 'WRESBAL', 'WTREGEN', 'RRPONTSYD', 'RPONTSYD', 'M2SL', 'NFCI', 'SOFR', 'IORB', 'DFEDTARU',
+        'SAHMREALTIME', 'ICSA', 'T10YIE', 'T5YIE']   # 경기 칸(2026-11-24 추가): 샴 룰(월간)·신규 실업수당(주간)·10년/5년 기대인플레(일간)
 @job('fred')
 def fred():
     key = os.environ.get('FRED_API_KEY')
