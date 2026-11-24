@@ -139,7 +139,7 @@ def bs_gamma(S, K, T, iv):
 def chain_summary(sym, n_exp=8):
     import yfinance as yf
     tk = yf.Ticker(sym)
-    spot = float(tk.history(period='5d')['Close'].iloc[-1])
+    h = tk.history(period='5d'); spot = float(h['Close'].iloc[-1]); spot_date = str(h.index[-1].date())
     rows = []
     for e in tk.options[:n_exp]:
         ch = tk.option_chain(e)
@@ -162,13 +162,17 @@ def chain_summary(sym, n_exp=8):
             flip = round(s1 + (s2 - s1) * (0 - g1) / (g2 - g1), 2)
             if abs(flip - spot) < spot * 0.15: break
     by_k = df.assign(g=df.apply(lambda r: bs_gamma(spot, r.strike, r['T'], r.iv) * r.oi * 100 * spot * spot * 0.01, axis=1))
-    call_wall = float(by_k[by_k.type == 'C'].groupby('strike').g.sum().idxmax())
-    put_wall = float(by_k[by_k.type == 'P'].groupby('strike').g.sum().idxmax())
+    cg = by_k[(by_k.type == 'C') & (by_k.strike >= spot)].groupby('strike').g.sum()      # 콜 월: 현재가 위 콜 감마 최대 행사가
+    pg = by_k[(by_k.type == 'P') & (by_k.strike <= spot)].groupby('strike').g.sum()      # 풋 월: 현재가 아래 풋 감마 최대 행사가
+    call_wall = float(cg.idxmax()) if len(cg) else None; put_wall = float(pg.idxmax()) if len(pg) else None
+    co = df[(df.type == 'C') & (df.strike >= spot)].groupby('strike').oi.sum(); po = df[(df.type == 'P') & (df.strike <= spot)].groupby('strike').oi.sum()
+    oi_call_max = float(co.idxmax()) if len(co) else None; oi_put_max = float(po.idxmax()) if len(po) else None
     return {'symbol': sym, 'spot': spot, 'expirations_used': sorted(df.exp.unique().tolist()),
             'put_call_volume': round(pc_vol, 3), 'put_call_oi': round(pc_oi, 3),
             'call_volume': df[df.type == 'C'].vol.sum(), 'put_volume': df[df.type == 'P'].vol.sum(),
             'call_oi': df[df.type == 'C'].oi.sum(), 'put_oi': df[df.type == 'P'].oi.sum(),
             'net_gex_per_1pct_usd': gex_at(spot), 'gamma_flip': flip, 'call_wall': call_wall, 'put_wall': put_wall,
+            'max_call_oi_strike_above': oi_call_max, 'max_put_oi_strike_below': oi_put_max, 'spot_date': spot_date,
             'method': '가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정'}
 @job('options_qqq_spy')
 def options():
