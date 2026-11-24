@@ -193,8 +193,53 @@ def options():
     if all('error' in v for v in out.values()): raise RuntimeError(json.dumps(out, ensure_ascii=False, default=str))
     save('options_summary.json', out)
 
+# 8. 과거값 채우기(백필) — 하루 한 번씩 비어 있는 날짜를 조금씩 채움 (data/series/)
+SER = os.path.join(ROOT, 'data', 'series'); os.makedirs(SER, exist_ok=True)
+def bdays_back(n):
+    d, out = NOW.date() - dt.timedelta(days=1), []
+    while len(out) < n:
+        if d.weekday() < 5: out.append(d)
+        d -= dt.timedelta(days=1)
+    return out
+@job('backfill_cboe_putcall')
+def backfill_pc():
+    p = os.path.join(SER, 'cboe_putcall.json'); h = json.load(open(p)) if os.path.exists(p) else {}
+    todo = [d for d in bdays_back(140) if str(d) not in h][:45]
+    for d in todo:
+        r = requests.get(f'https://www.cboe.com/us/options/market_statistics/daily/?dt={d}', headers=UA, timeout=40)
+        if not r.ok: continue
+        try:
+            t = pd.read_html(io.StringIO(r.text))[0].astype(str).values.tolist()
+            h[str(d)] = {row[0].replace(' PUT/CALL RATIO', ''): float(row[1]) for row in t if 'RATIO' in row[0] and row[1] not in ('nan', '')}
+        except Exception:
+            h[str(d)] = None          # 휴장일 등 표 없음
+    json.dump(dict(sorted(h.items())), open(p, 'w'), ensure_ascii=False, indent=0)
+def vx_expiries(start='2026-03-01', months=14):
+    out, m = [], pd.Timestamp(start)
+    for _ in range(months):
+        nxt = (m + pd.offsets.MonthBegin(1))
+        fri = pd.date_range(nxt, nxt + pd.Timedelta(days=27), freq='W-FRI')[2]   # 다음 달 셋째 금요일
+        out.append((fri - pd.Timedelta(days=30)).date()); m = nxt
+    return out
+@job('backfill_vx_front')
+def backfill_vx():
+    rows = {}
+    for e in vx_expiries():
+        try:
+            r = requests.get(f'https://cdn.cboe.com/data/us/futures/market_statistics/historical_data/VX/VX_{e}.csv', headers=UA, timeout=40)
+            if not r.ok: continue
+            df = pd.read_csv(io.StringIO(r.text))
+            for _, x in df.iterrows():
+                d = str(x['Trade Date'])[:10]
+                if d < str(e) and float(x['Settle']) > 0 and (d not in rows or rows[d][0] > str(e)):
+                    rows[d] = [str(e), float(x['Settle'])]          # 그날 가장 가까운 만기(근월물) 정산가
+        except Exception:
+            continue
+    if not rows: raise RuntimeError('VX 과거 정산가 못 받음')
+    json.dump(dict(sorted(rows.items())), open(os.path.join(SER, 'vx_front.json'), 'w'), indent=0)
+
 if __name__ == '__main__':
-    for f in (yahoo_daily, cnn, fred, treasury, cboe_vx, cboe_pc, rrp, options):
+    for f in (yahoo_daily, cnn, fred, treasury, cboe_vx, cboe_pc, rrp, options, backfill_pc, backfill_vx):
         f()
     save('status.json', status)
     print(json.dumps(status, ensure_ascii=False, indent=1))
