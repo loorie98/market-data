@@ -1,5 +1,5 @@
 {
- "run_utc": "2026-11-24T08:10:17+00:00",
+ "run_utc": "2026-11-24T09:11:22+00:00",
  "ok": [
   "yahoo_daily",
   "cnn_fear_greed",
@@ -8,7 +8,9 @@
   "cboe_vx_settlement",
   "cboe_putcall",
   "nyfed_rrp",
-  "options_qqq_spy"
+  "options_qqq_spy",
+  "backfill_cboe_putcall",
+  "backfill_vx_front"
  ],
  "fail": {}
 }
