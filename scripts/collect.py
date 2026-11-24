@@ -64,7 +64,14 @@ def cnn():
     start = (NOW - dt.timedelta(days=400)).strftime('%Y-%m-%d')
     h = dict(UA, Referer='https://edition.cnn.com/', Origin='https://edition.cnn.com')
     d = requests.get(f'https://production.dataviz.cnn.io/index/fearandgreed/graphdata/{start}', headers=h, timeout=40)
-    d.raise_for_status(); save('cnn_fear_greed.json', d.json())
+    d.raise_for_status(); j = d.json(); save('cnn_fear_greed.json', j)
+    # 세부 7개 '점수'는 CNN이 그날 것만 주므로 매일 모아 둠 (data/series/cnn_sub_scores.json, 날짜 = 미국 기준일)
+    p = os.path.join(ROOT, 'data', 'series', 'cnn_sub_scores.json'); os.makedirs(os.path.dirname(p), exist_ok=True)
+    h = json.load(open(p)) if os.path.exists(p) else {}
+    day = pd.Timestamp(j['fear_and_greed']['timestamp']).tz_convert('America/New_York').strftime('%Y-%m-%d')
+    keys = ['market_momentum_sp500', 'stock_price_strength', 'stock_price_breadth', 'put_call_options', 'market_volatility_vix', 'safe_haven_demand', 'junk_bond_demand']
+    h[day] = {'score': round(j['fear_and_greed']['score'], 2), **{k: round(j[k]['score'], 2) for k in keys if k in j}}
+    json.dump(dict(sorted(h.items())), open(p, 'w'), indent=0)
 
 # 3. FRED (API 키 필요)
 FRED = ['BAMLH0A0HYM2', 'BAMLH0A3HYC', 'BAMLH0A1HYBB', 'BAMLC0A0CM', 'BAA10Y', 'DGS2', 'DGS10', 'DTB3', 'STLFSI4',
