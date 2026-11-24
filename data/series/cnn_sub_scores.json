@@ -21,15 +21,15 @@
 "close_official": 16.97
 },
 "2026-11-24": {
-"score": 15.82,
+"score": 15.91,
 "market_momentum_sp500": 3.2,
 "stock_price_strength": 28.6,
 "stock_price_breadth": 17.6,
 "put_call_options": 6.6,
-"market_volatility_vix": 30.13,
+"market_volatility_vix": 30.77,
 "safe_haven_demand": 6.4,
 "junk_bond_demand": 18.2,
-"ts_et": "2026-11-24 05:47",
+"ts_et": "2026-11-24 06:52",
 "final": false
 }
 }
