@@ -12,21 +12,21 @@
    "2026-12-03",
    "2026-12-04"
   ],
-  "put_call_volume": 1.156,
+  "put_call_volume": 1.202,
   "put_call_oi": 1.121,
-  "call_volume": 876359.0,
-  "put_volume": 1013199.0,
+  "call_volume": 196400.0,
+  "put_volume": 236016.0,
   "call_oi": 1035146.0,
   "put_oi": 1160792.0,
-  "net_gex_per_1pct_usd": -15254113084.082983,
-  "gamma_flip": 653.72,
-  "call_wall": 652.0,
-  "put_wall": 651.0,
+  "net_gex_per_1pct_usd": 899251115.993702,
+  "gamma_flip": 646.71,
+  "call_wall": 660.0,
+  "put_wall": 635.0,
   "max_call_oi_strike_above": 700.0,
   "max_put_oi_strike_below": 635.0,
   "spot_date": "2026-11-23",
   "method": "가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정",
-  "as_of_utc": "2026-11-24T12:30+00:00"
+  "as_of_utc": "2026-11-24T13:21+00:00"
  },
  "SPY": {
   "symbol": "SPY",
@@ -41,20 +41,20 @@
    "2026-12-03",
    "2026-12-04"
   ],
-  "put_call_volume": 1.078,
+  "put_call_volume": 0.613,
   "put_call_oi": 1.16,
-  "call_volume": 1614398.0,
-  "put_volume": 1740164.0,
+  "call_volume": 398617.0,
+  "put_volume": 244369.0,
   "call_oi": 1449296.0,
   "put_oi": 1681655.0,
-  "net_gex_per_1pct_usd": 97176226.16257447,
-  "gamma_flip": 722.24,
-  "call_wall": 723.0,
-  "put_wall": 722.0,
+  "net_gex_per_1pct_usd": -576095058.816875,
+  "gamma_flip": 723.69,
+  "call_wall": 730.0,
+  "put_wall": 700.0,
   "max_call_oi_strike_above": 775.0,
   "max_put_oi_strike_below": 700.0,
   "spot_date": "2026-11-23",
   "method": "가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정",
-  "as_of_utc": "2026-11-24T12:30+00:00"
+  "as_of_utc": "2026-11-24T13:21+00:00"
  }
 }
