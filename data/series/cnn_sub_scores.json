@@ -18,5 +18,15 @@
 "market_volatility_vix": 39.0,
 "safe_haven_demand": 6.4,
 "junk_bond_demand": 18.2
+},
+"2026-11-24": {
+"score": 16.73,
+"market_momentum_sp500": 3.2,
+"stock_price_strength": 28.6,
+"stock_price_breadth": 17.6,
+"put_call_options": 6.6,
+"market_volatility_vix": 36.54,
+"safe_haven_demand": 6.4,
+"junk_bond_demand": 18.2
 }
 }
