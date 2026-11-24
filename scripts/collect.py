@@ -176,11 +176,21 @@ def chain_summary(sym, n_exp=8):
             'method': '가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정'}
 @job('options_qqq_spy')
 def options():
+    # 야후는 미국 새벽(장 시작 전)에 미결제약정을 0으로 비워 둘 때가 있음 → 그때는 직전 정상값을 그대로 두고 'stale' 표시
+    prev_p = os.path.join(LATEST, 'options_summary.json')
+    prev = json.load(open(prev_p)) if os.path.exists(prev_p) else {}
     out = {}
     for s in ('QQQ', 'SPY'):
-        try: out[s] = chain_summary(s)
-        except Exception as e: out[s] = {'error': f'{type(e).__name__}: {e}'[:200]}
-    if all('error' in v for v in out.values()): raise RuntimeError(json.dumps(out, ensure_ascii=False))
+        try:
+            r = chain_summary(s)
+            if (r.get('call_oi', 0) + r.get('put_oi', 0)) == 0:
+                old = dict(prev.get(s, {})); old['stale'] = f'{NOW:%Y-%m-%dT%H:%MZ} 미결제약정 0(야후 미갱신) — 직전 값 유지'
+                out[s] = old
+            else:
+                r['as_of_utc'] = NOW.isoformat(timespec='minutes'); out[s] = r
+        except Exception as e:
+            out[s] = dict(prev.get(s, {}), error=f'{type(e).__name__}: {e}'[:200])
+    if all('error' in v for v in out.values()): raise RuntimeError(json.dumps(out, ensure_ascii=False, default=str))
     save('options_summary.json', out)
 
 if __name__ == '__main__':
