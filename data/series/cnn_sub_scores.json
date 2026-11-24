@@ -1,0 +1,22 @@
+{
+"2026-11-20": {
+"score": 9.67,
+"market_momentum_sp500": 0.2,
+"stock_price_strength": 27.2,
+"stock_price_breadth": 20.0,
+"put_call_options": 2.0,
+"market_volatility_vix": 1.32,
+"safe_haven_demand": 0.8,
+"junk_bond_demand": 16.2
+},
+"2026-11-23": {
+"score": 16.97,
+"market_momentum_sp500": 3.2,
+"stock_price_strength": 28.4,
+"stock_price_breadth": 17.0,
+"put_call_options": 6.6,
+"market_volatility_vix": 39.0,
+"safe_haven_demand": 6.4,
+"junk_bond_demand": 18.2
+}
+}
