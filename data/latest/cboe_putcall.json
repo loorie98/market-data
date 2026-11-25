@@ -1,5 +1,187 @@
 {
- "2026-11-24": "no table",
+ "2026-11-25": "no table",
+ "2026-11-24": [
+  [
+   [
+    "TOTAL PUT/CALL RATIO",
+    "0.95"
+   ],
+   [
+    "INDEX PUT/CALL RATIO",
+    "1.12"
+   ],
+   [
+    "EXCHANGE TRADED PRODUCTS PUT/CALL RATIO",
+    "1.13"
+   ],
+   [
+    "EQUITY PUT/CALL RATIO",
+    "0.57"
+   ],
+   [
+    "CBOE VOLATILITY INDEX (VIX) PUT/CALL RATIO",
+    "0.9"
+   ],
+   [
+    "SPX + SPXW + SPXO PUT/CALL RATIO",
+    "1.15"
+   ],
+   [
+    "XSP PUT/CALL RATIO",
+    "1.37"
+   ],
+   [
+    "KPI BINARY OPTIONS PUT/CALL RATIO",
+    "33.0"
+   ],
+   [
+    "OEX PUT/CALL RATIO",
+    "0.1"
+   ],
+   [
+    "MRUT PUT/CALL RATIO",
+    "1.2"
+   ],
+   [
+    "MXEA PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "MXEF PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "MXACW PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "MXWLD PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "MXUSA PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "CBTX PUT/CALL RATIO",
+    "0.81"
+   ],
+   [
+    "MBTX PUT/CALL RATIO",
+    "4.0"
+   ],
+   [
+    "SPEQX PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "SPEQW PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "MGTN PUT/CALL RATIO",
+    "2.56"
+   ],
+   [
+    "MGTNW PUT/CALL RATIO",
+    "0.03"
+   ],
+   [
+    "DJX PUT/CALL RATIO",
+    "9.67"
+   ],
+   [
+    "DJXW PUT/CALL RATIO",
+    "0.92"
+   ],
+   [
+    "XSPBX PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "XSPBW PUT/CALL RATIO",
+    "1.8"
+   ],
+   [
+    "MRTBX PUT/CALL RATIO",
+    "0.0"
+   ],
+   [
+    "MRTBW PUT/CALL RATIO",
+    "0.0"
+   ]
+  ],
+  [
+   [
+    "VOLUME",
+    "7390726",
+    "7005134",
+    "14395860"
+   ],
+   [
+    "OPEN INTEREST",
+    "383625412",
+    "287852694",
+    "671478106"
+   ]
+  ],
+  [
+   [
+    "VOLUME",
+    "3292274",
+    "3679282",
+    "6971556"
+   ],
+   [
+    "OPEN INTEREST",
+    "21120100",
+    "22494161",
+    "43614261"
+   ]
+  ],
+  [
+   [
+    "VOLUME",
+    "1760427",
+    "1989016",
+    "3749443"
+   ],
+   [
+    "OPEN INTEREST",
+    "95862104",
+    "97284965",
+    "193147069"
+   ]
+  ],
+  [
+   [
+    "VOLUME",
+    "2337993",
+    "1335780",
+    "3673773"
+   ],
+   [
+    "OPEN INTEREST",
+    "266643208",
+    "168073568",
+    "434716776"
+   ]
+  ],
+  [
+   [
+    "VOLUME",
+    "487093",
+    "440158",
+    "927251"
+   ],
+   [
+    "OPEN INTEREST",
+    "6824309",
+    "3931881",
+    "10756190"
+   ]
+  ]
+ ],
  "2026-11-23": [
   [
    [
@@ -543,188 +725,6 @@
     "6626702",
     "2949414",
     "9576116"
-   ]
-  ]
- ],
- "2026-11-18": [
-  [
-   [
-    "TOTAL PUT/CALL RATIO",
-    "1.05"
-   ],
-   [
-    "INDEX PUT/CALL RATIO",
-    "1.14"
-   ],
-   [
-    "EXCHANGE TRADED PRODUCTS PUT/CALL RATIO",
-    "1.42"
-   ],
-   [
-    "EQUITY PUT/CALL RATIO",
-    "0.72"
-   ],
-   [
-    "CBOE VOLATILITY INDEX (VIX) PUT/CALL RATIO",
-    "0.88"
-   ],
-   [
-    "SPX + SPXW + SPXO PUT/CALL RATIO",
-    "1.19"
-   ],
-   [
-    "XSP PUT/CALL RATIO",
-    "1.07"
-   ],
-   [
-    "KPI BINARY OPTIONS PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "OEX PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MRUT PUT/CALL RATIO",
-    "1.62"
-   ],
-   [
-    "MXEA PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MXEF PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MXACW PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MXWLD PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MXUSA PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "CBTX PUT/CALL RATIO",
-    "22.0"
-   ],
-   [
-    "MBTX PUT/CALL RATIO",
-    "13.0"
-   ],
-   [
-    "SPEQX PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "SPEQW PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MGTN PUT/CALL RATIO",
-    "7.0"
-   ],
-   [
-    "MGTNW PUT/CALL RATIO",
-    "0.03"
-   ],
-   [
-    "DJX PUT/CALL RATIO",
-    "30.72"
-   ],
-   [
-    "DJXW PUT/CALL RATIO",
-    "1.62"
-   ],
-   [
-    "XSPBX PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "XSPBW PUT/CALL RATIO",
-    "0.38"
-   ],
-   [
-    "MRTBX PUT/CALL RATIO",
-    "0.0"
-   ],
-   [
-    "MRTBW PUT/CALL RATIO",
-    "0.0"
-   ]
-  ],
-  [
-   [
-    "VOLUME",
-    "7187041",
-    "7575055",
-    "14762096"
-   ],
-   [
-    "OPEN INTEREST",
-    "426955049",
-    "315667037",
-    "742622086"
-   ]
-  ],
-  [
-   [
-    "VOLUME",
-    "3391447",
-    "3873903",
-    "7265350"
-   ],
-   [
-    "OPEN INTEREST",
-    "25203797",
-    "24690248",
-    "49894045"
-   ]
-  ],
-  [
-   [
-    "VOLUME",
-    "1404327",
-    "1988365",
-    "3392692"
-   ],
-   [
-    "OPEN INTEREST",
-    "107244959",
-    "107271971",
-    "214516930"
-   ]
-  ],
-  [
-   [
-    "VOLUME",
-    "2391267",
-    "1712787",
-    "4104054"
-   ],
-   [
-    "OPEN INTEREST",
-    "294506293",
-    "183704818",
-    "478211111"
-   ]
-  ],
-  [
-   [
-    "VOLUME",
-    "464983",
-    "407679",
-    "872662"
-   ],
-   [
-    "OPEN INTEREST",
-    "10593601",
-    "5188390",
-    "15781991"
    ]
   ]
  ]

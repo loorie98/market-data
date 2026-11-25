@@ -30,6 +30,19 @@
 "safe_haven_demand": 4.4,
 "junk_bond_demand": 17.8,
 "ts_et": "2026-11-24 17:03",
+"final": false,
+"close_official": 17.42
+},
+"2026-11-25": {
+"score": 12.51,
+"market_momentum_sp500": 3,
+"stock_price_strength": 29.2,
+"stock_price_breadth": 17,
+"put_call_options": 8.8,
+"market_volatility_vix": 7.59,
+"safe_haven_demand": 4.4,
+"junk_bond_demand": 17.6,
+"ts_et": "2026-11-25 07:14",
 "final": false
 }
 }

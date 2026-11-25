@@ -1,9 +1,9 @@
-=== run 2026-11-24T22:32:43Z · commit e9de851 · python Python 3.12.16
+=== run 2026-11-25T12:33:58Z · commit 0aa98d6 · python Python 3.12.16
 --- pip install
 pip exit=0
 --- collect.py
 {
- "run_utc": "2026-11-24T22:32:56+00:00",
+ "run_utc": "2026-11-25T12:34:09+00:00",
  "ok": [
   "yahoo_daily",
   "cnn_fear_greed",
@@ -20,6 +20,6 @@ pip exit=0
 }
 collect exit=0
 --- collect_long.py (1990~ 장기 일봉)
-yahoo_long {"run_utc": "2026-11-24T22:33:40+00:00", "fail": {}, "n": {"^NDX": 9293, "^GSPC": 9293, "^VIX": 9295, "^VIX3M": 5123, "^TNX": 9262, "^IRX": 9262, "SPY": 8514, "QQQ": 6972, "VWEHX": 9292}}
+yahoo_long {"run_utc": "2026-11-25T12:34:53+00:00", "fail": {}, "n": {"^NDX": 9293, "^GSPC": 9293, "^VIX": 9296, "^VIX3M": 5123, "^TNX": 9262, "^IRX": 9262, "SPY": 8514, "QQQ": 6972, "VWEHX": 9293}}
 collect_long exit=0
---- push try 1 22:33:41Z
+--- push try 1 12:34:54Z
