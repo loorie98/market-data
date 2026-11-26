@@ -8,6 +8,7 @@ import sys
 import requests, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import us_calendar as CAL   # 미국 공식 거래 일정(scripts/us_calendar.py, 프로젝트 claude/us_calendar.py와 같은 내용)
+# 2026-11-26 2차: 키 이중 차단(save 전체 검사 + run.sh 올리기 전 검사)·FRED 일시 오류 재시도
 # 2026-11-26 1차 오류 수정: 지표별 수집 결과(status.detail) · CNN 날짜를 거래일 기준으로 · 옵션 만기 시각 뉴욕 기준 · 당일 만기 최소 1일 제거 · 감마 플립은 현재가에 가장 가까운 교차점 · 딜러 가정 설명 정정
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -18,18 +19,21 @@ HIST = os.path.join(ROOT, 'data', 'history', STAMP)
 os.makedirs(LATEST, exist_ok=True); os.makedirs(HIST, exist_ok=True)
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
       'Accept': 'application/json,text/csv,text/html;q=0.9,*/*;q=0.8'}
-import re
-def _clean(e):   # 오류 문구에서 API 키를 지움(공개 저장소에 키가 남지 않게, 2026-11-26)
-    return re.sub(r'(api_key=)[^&\s\'"]+', r'\1***', str(e))
+import re, time
+SECRETS = [v for v in (os.environ.get('FRED_API_KEY'),) if v and len(v) >= 8]   # 공개 저장소에 절대 남으면 안 되는 값
+def _clean(e):   # 오류 문구에서 API 키를 지움 — ① 'api_key=…' 형식 ② 형식과 관계없이 실제 키 값 (2026-11-26)
+    t = re.sub(r'(api_key=)[^&\s\'"]+', r'\1***', str(e))
+    for k in SECRETS: t = t.replace(k, '***')
+    return t
 status = {'run_utc': NOW.isoformat(timespec='seconds'), 'ok': [], 'fail': {}, 'detail': {}}   # detail = 자료 묶음 안의 지표별 성공·실패
 
 def save(name, obj, kind='json'):
+    text = json.dumps(obj, ensure_ascii=False, indent=1, default=str) if kind == 'json' else obj
+    if any(k in text for k in SECRETS):                    # 저장 직전 전체 검사: 키 값이 어디에 섞여 있든 가림 (2026-11-26)
+        print(f'주의: {name}에 키 값이 들어 있어 가리고 저장함')
+        for k in SECRETS: text = text.replace(k, '***')
     for d in (LATEST, HIST):
-        p = os.path.join(d, name)
-        if kind == 'json':
-            json.dump(obj, open(p, 'w'), ensure_ascii=False, indent=1, default=str)
-        else:
-            open(p, 'w', encoding='utf-8').write(obj)
+        open(os.path.join(d, name), 'w', encoding='utf-8').write(text)
 
 def job(name):
     def deco(f):
@@ -43,8 +47,17 @@ def job(name):
         return run
     return deco
 
-def get(url, **kw):
-    r = requests.get(url, headers=UA, timeout=40, **kw); r.raise_for_status(); return r
+def get(url, retry=0, **kw):
+    """retry > 0이면 서버 쪽 일시 오류(5xx·429·연결 끊김·시간 초과)일 때 5초, 15초 뒤 다시 요청 (2026-11-26)"""
+    for i in range(retry + 1):
+        try:
+            r = requests.get(url, headers=UA, timeout=40, **kw); r.raise_for_status(); return r
+        except requests.HTTPError as e:
+            code = e.response.status_code if e.response is not None else 0
+            if i == retry or not (code >= 500 or code == 429): raise
+        except (requests.ConnectionError, requests.Timeout):
+            if i == retry: raise
+        time.sleep((5, 15, 30)[min(i, 2)])
 
 # 1. 야후 일봉 (지수·VIX·ETF·원자재·환율) — 최근 2년
 YSYM = ['^GSPC', '^NDX', '^IXIC', '^RUT', '^DJI', '^VIX', '^VIX3M', '^VIX1D', '^VXN', '^TNX', '^IRX', '^FVX',
@@ -104,7 +117,7 @@ def fred():
     start = (NOW - dt.timedelta(days=800)).strftime('%Y-%m-%d'); out = {}
     for sid in FRED:
         try:
-            j = get('https://api.stlouisfed.org/fred/series/observations',
+            j = get('https://api.stlouisfed.org/fred/series/observations', retry=2,
                     params={'series_id': sid, 'api_key': key, 'file_type': 'json', 'observation_start': start}).json()
             out[sid] = [[o['date'], None if o['value'] == '.' else float(o['value'])] for o in j['observations']]
             last = next((r[0] for r in reversed(out[sid]) if r[1] is not None), None)

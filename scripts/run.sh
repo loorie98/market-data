@@ -27,8 +27,10 @@ for i in 1 2 3; do
   rm -rf data && cp -r /tmp/newdata data
   cp /tmp/run_log.txt "$LOG"
   echo "--- push try $i $(date -u +%H:%M:%SZ)" >> "$LOG"
+  # 올리기 직전 차단(2026-11-26): 비밀 키 값이 data/ 어디에든 있으면 가리고, 그래도 남으면 이번 회차는 올리지 않음
+  if ! python scripts/secret_guard.py data; then echo "키 값 발견 — 올리기 중단"; exit 1; fi
   git add -A data
-  if git diff --cached --quiet; then echo "바뀐 자료 없음"; exit 0; fi
+  if git diff --cached --quiet; then echo "바뀜 자료 없음"; exit 0; fi
   git commit -q -m "data $(date -u +%Y-%m-%dT%H:%MZ)"
   if git push -q origin HEAD:main; then echo "저장 완료"; exit 0; fi
   sleep 15
