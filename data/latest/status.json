@@ -1,5 +1,5 @@
 {
- "run_utc": "2026-11-26T12:33:36+00:00",
+ "run_utc": "2026-11-26T22:31:37+00:00",
  "ok": [
   "yahoo_daily",
   "cnn_fear_greed",
@@ -61,7 +61,7 @@
    "NFCI": "ok 2026-11-20",
    "SOFR": "ok 2026-11-24",
    "IORB": "ok 2026-11-27",
-   "DFEDTARU": "ok 2026-11-25",
+   "DFEDTARU": "ok 2026-11-26",
    "SAHMREALTIME": "ok 2026-10-01",
    "ICSA": "ok 2026-11-21",
    "T10YIE": "ok 2026-11-25",
