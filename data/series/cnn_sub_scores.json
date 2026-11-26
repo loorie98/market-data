@@ -31,19 +31,19 @@
 "junk_bond_demand": 17.8,
 "ts_et": "2026-11-24 17:03",
 "final": false,
-"close_official": 17.42,
-"close_official_from": "2026-11-25 18:59"
+"close_official": 15.23,
+"close_official_from": "2026-11-25 20:59"
 },
 "2026-11-25": {
-"score": 15.23,
+"score": 15.0,
 "market_momentum_sp500": 2.8,
-"stock_price_strength": 27.2,
-"stock_price_breadth": 17.2,
+"stock_price_strength": 25.6,
+"stock_price_breadth": 21.4,
 "put_call_options": 7,
 "market_volatility_vix": 34.18,
 "safe_haven_demand": 5.2,
 "junk_bond_demand": 13.2,
-"ts_et": "2026-11-25 18:59",
-"final": false
+"ts_et": "2026-11-25 20:59",
+"final": true
 }
 }
