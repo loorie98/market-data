@@ -4,7 +4,11 @@
 - 필요 비밀값: FRED_API_KEY (https://fredaccount.stlouisfed.org 에서 무료 발급)
 """
 import os, io, json, math, datetime as dt, traceback
+import sys
 import requests, pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import us_calendar as CAL   # 미국 공식 거래 일정(scripts/us_calendar.py, 프로젝트 claude/us_calendar.py와 같은 내용)
+# 2026-11-26 1차 오류 수정: 지표별 수집 결과(status.detail) · CNN 날짜를 거래일 기준으로 · 옵션 만기 시각 뉴욕 기준 · 당일 만기 최소 1일 제거 · 감마 플립은 현재가에 가장 가까운 교차점 · 딜러 가정 설명 정정
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LATEST = os.path.join(ROOT, 'data', 'latest')
@@ -14,7 +18,10 @@ HIST = os.path.join(ROOT, 'data', 'history', STAMP)
 os.makedirs(LATEST, exist_ok=True); os.makedirs(HIST, exist_ok=True)
 UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
       'Accept': 'application/json,text/csv,text/html;q=0.9,*/*;q=0.8'}
-status = {'run_utc': NOW.isoformat(timespec='seconds'), 'ok': [], 'fail': {}}
+import re
+def _clean(e):   # 오류 문구에서 API 키를 지움(공개 저장소에 키가 남지 않게, 2026-11-26)
+    return re.sub(r'(api_key=)[^&\s\'"]+', r'\1***', str(e))
+status = {'run_utc': NOW.isoformat(timespec='seconds'), 'ok': [], 'fail': {}, 'detail': {}}   # detail = 자료 묶음 안의 지표별 성공·실패
 
 def save(name, obj, kind='json'):
     for d in (LATEST, HIST):
@@ -30,8 +37,8 @@ def job(name):
             try:
                 f(); status['ok'].append(name)
             except Exception as e:
-                status['fail'][name] = f'{type(e).__name__}: {e}'[:300]
-                traceback.print_exc()
+                status['fail'][name] = _clean(f'{type(e).__name__}: {e}')[:300]
+                print(_clean(traceback.format_exc()))
         run.__name__ = name
         return run
     return deco
@@ -54,8 +61,9 @@ def yahoo_daily():
                 if q['close'][i] is None: continue
                 rows.append([dt.datetime.fromtimestamp(t, dt.timezone.utc).strftime('%Y-%m-%d'), q['close'][i], q['volume'][i], adj[i] if adj else None])
             out[s] = {'market_time': d['meta'].get('regularMarketTime'), 'rows': rows}
+            status['detail'].setdefault('yahoo_daily', {})[s] = f'ok {rows[-1][0]}' if rows else 'empty'
         except Exception as e:
-            out[s] = {'error': str(e)[:200]}
+            out[s] = {'error': str(e)[:200]}; status['detail'].setdefault('yahoo_daily', {})[s] = 'fail ' + str(e)[:120]
     save('yahoo_daily.json', out)
 
 # 2. CNN 공포탐욕 (종합 + 7개 세부, 과거값 포함)
@@ -69,9 +77,11 @@ def cnn():
     p = os.path.join(ROOT, 'data', 'series', 'cnn_sub_scores.json'); os.makedirs(os.path.dirname(p), exist_ok=True)
     h = json.load(open(p)) if os.path.exists(p) else {}
     # CNN은 지표마다 새 자료가 들어올 때 바로 다시 계산함(정해진 주기 없음). 장 마감 뒤에도 정크본드(약 18:30 ET)·신고가/시장 폭(약 19:00 ET)이 늦게 들어옴
-    # → 기준 시각이 미국 동부 19:00 이후면 '확정', 그 전이면 '잠정'. 같은 날짜는 더 늦은 시각 값으로만 덮어씀
+    # → 점수가 속한 거래일(session) = 그날 개장(09:30 ET) 뒤면 그날, 아니면(장 전·휴장일) 직전 거래일. 그 거래일 19:00 ET 이후 값이면 '확정', 그 전이면 '잠정'.
+    #   같은 날짜는 더 늦은 시각 값으로만 덮어씀 (2026-11-26 수정: 예전엔 달력 날짜를 그대로 써서 장 전·휴장일 값이 엉뚱한 날짜에 붙을 수 있었음)
     ts = pd.Timestamp(j['fear_and_greed']['timestamp']).tz_convert('America/New_York')
-    day = ts.strftime('%Y-%m-%d'); final = ts.hour >= 19
+    sess = CAL.session_of(ts.to_pydatetime())
+    day = sess.isoformat(); final = ts.to_pydatetime() >= dt.datetime.combine(sess, dt.time(19, 0), CAL.ET)
     keys = ['market_momentum_sp500', 'stock_price_strength', 'stock_price_breadth', 'put_call_options', 'market_volatility_vix', 'safe_haven_demand', 'junk_bond_demand']
     rec = {'score': round(j['fear_and_greed']['score'], 2), **{k: round(j[k]['score'], 2) for k in keys if k in j},
            'ts_et': ts.strftime('%Y-%m-%d %H:%M'), 'final': final}
@@ -79,10 +89,8 @@ def cnn():
     # 장 시작 전(미국 새벽)에 받으면 timestamp가 이미 다음 날일 수 있음 → CNN이 주는 '전일 마감'을 직전 거래일 확정 종합 점수로 기록
     pc = j['fear_and_greed'].get('previous_close')
     if pc is not None:
-        prev_day = (ts - pd.Timedelta(days=1)); 
-        while prev_day.weekday() >= 5: prev_day -= pd.Timedelta(days=1)
-        pd_ = prev_day.strftime('%Y-%m-%d')
-        if pd_ in h: h[pd_]['close_official'] = round(pc, 2)
+        pd_ = CAL.prev_td(sess).isoformat()        # '전일 마감' = 점수가 속한 거래일의 직전 거래일(휴장일 건너뜀)
+        if pd_ in h: h[pd_]['close_official'] = round(pc, 2); h[pd_]['close_official_from'] = rec['ts_et']
     json.dump(dict(sorted(h.items())), open(p, 'w'), indent=0)
 
 # 3. FRED (API 키 필요)
@@ -99,8 +107,10 @@ def fred():
             j = get('https://api.stlouisfed.org/fred/series/observations',
                     params={'series_id': sid, 'api_key': key, 'file_type': 'json', 'observation_start': start}).json()
             out[sid] = [[o['date'], None if o['value'] == '.' else float(o['value'])] for o in j['observations']]
+            last = next((r[0] for r in reversed(out[sid]) if r[1] is not None), None)
+            status['detail'].setdefault('fred', {})[sid] = f'ok {last}' if last else 'empty'
         except Exception as e:
-            out[sid] = {'error': str(e)[:200]}
+            out[sid] = {'error': _clean(e)[:200]}; status['detail'].setdefault('fred', {})[sid] = 'fail ' + _clean(e)[:120]
     save('fred.json', out)
 
 # 4. 미 재무부 국채 수익률 (공식 종가, 이번 달·지난달)
@@ -163,7 +173,10 @@ def chain_summary(sym, n_exp=8):
     rows = []
     for e in tk.options[:n_exp]:
         ch = tk.option_chain(e)
-        T = max((pd.Timestamp(e) + pd.Timedelta(hours=16) - pd.Timestamp.now('UTC').tz_localize(None)).total_seconds() / 3.156e7, 1 / 365)
+        exp_at = CAL.close_et(e) if CAL.is_trading(e) else dt.datetime.combine(dt.date.fromisoformat(e), dt.time(16, 0), CAL.ET)   # 만기 = 뉴욕 장 마감(반나절이면 13:00)
+        T = (exp_at - dt.datetime.now(dt.timezone.utc)).total_seconds() / 3.156e7
+        if T <= 0: continue                                    # 이미 끝난 만기는 뺌
+        T = max(T, 15 * 60 / 3.156e7)                          # 당일 만기: 실제 남은 시간 그대로(감마 폭주만 막으려 최소 15분). 예전엔 최소 1일
         for typ, df in (('C', ch.calls), ('P', ch.puts)):
             for _, r in df.iterrows():
                 rows.append([e, typ, float(r['strike']), float(r.get('volume') or 0 if not pd.isna(r.get('volume')) else 0),
@@ -171,16 +184,16 @@ def chain_summary(sym, n_exp=8):
     df = pd.DataFrame(rows, columns=['exp', 'type', 'strike', 'vol', 'oi', 'iv', 'T'])
     pc_vol = df[df.type == 'P'].vol.sum() / max(df[df.type == 'C'].vol.sum(), 1)
     pc_oi = df[df.type == 'P'].oi.sum() / max(df[df.type == 'C'].oi.sum(), 1)
-    def gex_at(S):   # 딜러가 콜 매수자·풋 매수자의 반대편이라는 통상 가정: 콜 +, 풋 −  (1% 움직임당 달러)
+    def gex_at(S):   # 업계 통상 가정: 딜러는 콜을 사 들고(고객이 콜 매도) 풋을 팔아 둔 상태(고객이 풋 매수) → 콜 +, 풋 −  (1% 움직임당 달러, 추정치)
         g = df.apply(lambda r: bs_gamma(S, r.strike, r['T'], r.iv) * r.oi * 100 * S * S * 0.01 * (1 if r.type == 'C' else -1), axis=1)
         return float(g.sum())
     grid = [spot * (0.85 + 0.005 * i) for i in range(61)]
     curve = [[round(s, 2), gex_at(s)] for s in grid]
-    flip = None
+    flips = []                                              # 부호가 바뀌는 곳을 모두 찾고, 현재가에 가장 가까운 것을 감마 플립으로
     for (s1, g1), (s2, g2) in zip(curve, curve[1:]):
-        if g1 < 0 <= g2 or g1 > 0 >= g2:
-            flip = round(s1 + (s2 - s1) * (0 - g1) / (g2 - g1), 2)
-            if abs(flip - spot) < spot * 0.15: break
+        if (g1 < 0 <= g2 or g1 > 0 >= g2) and g2 != g1:
+            flips.append(round(s1 + (s2 - s1) * (0 - g1) / (g2 - g1), 2))
+    flip = min(flips, key=lambda f: abs(f - spot)) if flips else None
     by_k = df.assign(g=df.apply(lambda r: bs_gamma(spot, r.strike, r['T'], r.iv) * r.oi * 100 * spot * spot * 0.01, axis=1))
     cg = by_k[(by_k.type == 'C') & (by_k.strike >= spot)].groupby('strike').g.sum()      # 콜 월: 현재가 위 콜 감마 최대 행사가
     pg = by_k[(by_k.type == 'P') & (by_k.strike <= spot)].groupby('strike').g.sum()      # 풋 월: 현재가 아래 풋 감마 최대 행사가
@@ -191,9 +204,10 @@ def chain_summary(sym, n_exp=8):
             'put_call_volume': round(pc_vol, 3), 'put_call_oi': round(pc_oi, 3),
             'call_volume': df[df.type == 'C'].vol.sum(), 'put_volume': df[df.type == 'P'].vol.sum(),
             'call_oi': df[df.type == 'C'].oi.sum(), 'put_oi': df[df.type == 'P'].oi.sum(),
-            'net_gex_per_1pct_usd': gex_at(spot), 'gamma_flip': flip, 'call_wall': call_wall, 'put_wall': put_wall,
+            'net_gex_per_1pct_usd': gex_at(spot), 'gamma_flip': flip, 'gamma_flips_all': flips, 'call_wall': call_wall, 'put_wall': put_wall,
             'max_call_oi_strike_above': oi_call_max, 'max_put_oi_strike_below': oi_put_max, 'spot_date': spot_date,
-            'method': '가까운 만기 8개, 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매도·풋 매수 가정'}
+            'method': '가까운 만기 8개(뉴욕 장 마감 기준 남은 시간), 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매수·풋 매도 가정(업계 통상)',
+            'note': '추정 모델 — 공개 미결제약정에 딜러 포지션을 가정해 계산한 값이며 실제 딜러 포지션이 아님'}
 @job('options_qqq_spy')
 def options():
     # 야후는 미국 새벽(장 시작 전)에 미결제약정을 0으로 비워 둘 때가 있음 → 그때는 직전 정상값을 그대로 두고 'stale' 표시
@@ -211,6 +225,7 @@ def options():
         except Exception as e:
             out[s] = dict(prev.get(s, {}), error=f'{type(e).__name__}: {e}'[:200])
     if all('error' in v for v in out.values()): raise RuntimeError(json.dumps(out, ensure_ascii=False, default=str))
+    status['detail']['options_qqq_spy'] = {k: ('fail ' + v['error'][:80]) if 'error' in v else ('stale' if v.get('stale') else f"ok {v.get('spot_date')}") for k, v in out.items()}
     save('options_summary.json', out)
 
 # 8. 과거값 채우기(백필) — 하루 한 번씩 비어 있는 날짜를 조금씩 채움 (data/series/)
