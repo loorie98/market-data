@@ -1,9 +1,8 @@
 {
  "QQQ": {
   "symbol": "QQQ",
-  "spot": 633.9299926757812,
+  "spot": 650.989990234375,
   "expirations_used": [
-   "2026-11-27",
    "2026-11-30",
    "2026-12-01",
    "2026-12-02",
@@ -12,31 +11,30 @@
    "2026-12-07",
    "2026-12-08"
   ],
-  "put_call_volume": 1.27,
-  "put_call_oi": 1.038,
-  "call_volume": 1078879.0,
-  "put_volume": 1370647.0,
-  "call_oi": 543499.0,
-  "put_oi": 564154.0,
-  "net_gex_per_1pct_usd": 81670657.45985736,
-  "gamma_flip": 633.87,
+  "put_call_volume": 1.569,
+  "put_call_oi": 1.282,
+  "call_volume": 489208.0,
+  "put_volume": 767602.0,
+  "call_oi": 336423.0,
+  "put_oi": 431444.0,
+  "net_gex_per_1pct_usd": 112380373.23941915,
+  "gamma_flip": 648.38,
   "gamma_flips_all": [
-   633.87
+   648.38
   ],
-  "call_wall": 634.0,
-  "put_wall": 633.0,
-  "max_call_oi_strike_above": 700.0,
-  "max_put_oi_strike_below": 630.0,
-  "spot_date": "2026-11-25",
+  "call_wall": 660.0,
+  "put_wall": 640.0,
+  "max_call_oi_strike_above": 680.0,
+  "max_put_oi_strike_below": 590.0,
+  "spot_date": "2026-11-27",
   "method": "가까운 만기 8개(뉴욕 장 마감 기준 남은 시간), 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매수·풋 매도 가정(업계 통상)",
   "note": "추정 모델 — 공개 미결제약정에 딜러 포지션을 가정해 계산한 값이며 실제 딜러 포지션이 아님",
-  "as_of_utc": "2026-11-27T12:29+00:00"
+  "as_of_utc": "2026-11-27T22:32+00:00"
  },
  "SPY": {
   "symbol": "SPY",
-  "spot": 716.7000122070312,
+  "spot": 728.3200073242188,
   "expirations_used": [
-   "2026-11-27",
    "2026-11-30",
    "2026-12-01",
    "2026-12-02",
@@ -45,24 +43,24 @@
    "2026-12-07",
    "2026-12-08"
   ],
-  "put_call_volume": 1.09,
-  "put_call_oi": 1.145,
-  "call_volume": 1857686.0,
-  "put_volume": 2024542.0,
-  "call_oi": 746237.0,
-  "put_oi": 854358.0,
-  "net_gex_per_1pct_usd": 83249395.07274984,
-  "gamma_flip": 716.07,
+  "put_call_volume": 0.836,
+  "put_call_oi": 1.326,
+  "call_volume": 806704.0,
+  "put_volume": 674588.0,
+  "call_oi": 449455.0,
+  "put_oi": 596031.0,
+  "net_gex_per_1pct_usd": -350745723.0485994,
+  "gamma_flip": 732.24,
   "gamma_flips_all": [
-   716.07
+   732.24
   ],
-  "call_wall": 717.0,
-  "put_wall": 715.0,
-  "max_call_oi_strike_above": 775.0,
-  "max_put_oi_strike_below": 700.0,
-  "spot_date": "2026-11-25",
+  "call_wall": 730.0,
+  "put_wall": 724.0,
+  "max_call_oi_strike_above": 730.0,
+  "max_put_oi_strike_below": 570.0,
+  "spot_date": "2026-11-27",
   "method": "가까운 만기 8개(뉴욕 장 마감 기준 남은 시간), 야후 옵션 목록의 미결제약정·내재변동성, 블랙숄즈 감마, 딜러 콜 매수·풋 매도 가정(업계 통상)",
   "note": "추정 모델 — 공개 미결제약정에 딜러 포지션을 가정해 계산한 값이며 실제 딜러 포지션이 아님",
-  "as_of_utc": "2026-11-27T12:29+00:00"
+  "as_of_utc": "2026-11-27T22:32+00:00"
  }
 }
