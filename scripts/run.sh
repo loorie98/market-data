@@ -15,6 +15,9 @@ LOG=data/latest/run_log.txt
   echo "--- collect_long.py (1990~ 장기 일봉)"
   python scripts/collect_long.py 2>&1 | tail -20
   echo "collect_long exit=${PIPESTATUS[0]}"
+  echo "--- collect_breadth.py (나스닥100 시장 폭, 2026-11-27 추가)"
+  python scripts/collect_breadth.py 2>&1 | tail -20
+  echo "collect_breadth exit=${PIPESTATUS[0]}"
 } > /tmp/run_log.txt 2>&1
 cat /tmp/run_log.txt
 
