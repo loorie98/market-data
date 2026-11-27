@@ -32,7 +32,7 @@
 "ts_et": "2026-11-24 17:03",
 "final": false,
 "close_official": 15.6,
-"close_official_from": "2026-11-27 06:47"
+"close_official_from": "2026-11-27 07:14"
 },
 "2026-11-25": {
 "score": 17.86,
@@ -43,7 +43,7 @@
 "market_volatility_vix": 50,
 "safe_haven_demand": 5.2,
 "junk_bond_demand": 13.2,
-"ts_et": "2026-11-27 06:47",
+"ts_et": "2026-11-27 07:14",
 "final": true
 }
 }

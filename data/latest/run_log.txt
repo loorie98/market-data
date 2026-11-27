@@ -1,9 +1,9 @@
-=== run 2026-11-27T12:08:53Z · commit cf9645e · python Python 3.12.16
+=== run 2026-11-27T12:29:25Z · commit cb5e131 · python Python 3.12.16
 --- pip install
 pip exit=0
 --- collect.py
 {
- "run_utc": "2026-11-27T12:09:06+00:00",
+ "run_utc": "2026-11-27T12:29:35+00:00",
  "ok": [
   "yahoo_daily",
   "cnn_fear_greed",
@@ -79,9 +79,9 @@ pip exit=0
 }
 collect exit=0
 --- collect_long.py (1990~ 장기 일봉)
-yahoo_long {"run_utc": "2026-11-27T12:10:03+00:00", "fail": {}, "n": {"^NDX": 9294, "^GSPC": 9294, "^VIX": 9298, "^VIX3M": 5124, "^TNX": 9263, "^IRX": 9263, "SPY": 8515, "QQQ": 6973, "VWEHX": 9294}}
+yahoo_long {"run_utc": "2026-11-27T12:30:20+00:00", "fail": {}, "n": {"^NDX": 9294, "^GSPC": 9294, "^VIX": 9298, "^VIX3M": 5124, "^TNX": 9263, "^IRX": 9263, "SPY": 8515, "QQQ": 6973, "VWEHX": 9294}}
 collect_long exit=0
 --- collect_breadth.py (나스닥100 시장 폭, 2026-11-27 추가)
-n100_breadth {"rebuild": true, "tickers_needed": 322, "tickers_priced": 202, "last": ["2026-11-25", 101, 100, 37.0, 43.0, 42.9, 57, 43, 0, 36.0]} missing 120
+n100_breadth {"rebuild": false, "tickers_needed": 119, "tickers_priced": 117, "last": ["2026-11-25", 101, 100, 37.0, 43.0, 42.9, 57, 43, 0, 36.0]} missing 2
 collect_breadth exit=0
---- push try 1 12:11:45Z
+--- push try 1 12:31:04Z
